@@ -69,8 +69,30 @@ def main(argv):
     print("number of nanobots: ", len(nanobot_list))
 
     avg_x, avg_y, avg_z = get_avg_positions(nanobot_list)
-    
+    # average position is at 0,0,0... how convenient...
     print("avg x: ", avg_x, " avg y: ", avg_y, " avg z: ", avg_z)
+
+    # attempt a brute force solution, should be approx O(n^4)...
+    start = -20
+    end = 20
+    global_in_range = 0
+    global_coords = []
+    for i in range(start, end + 1):
+        print("made it to i")
+        for j in range(start, end + 1):
+            for k in range(start, end + 1):
+                local_in_range = 0
+                local_coords = [i, j, k]
+                for bot in nanobot_list:
+                    if manhattan_range(i, j, k, bot) == True:
+                        local_in_range += 1
+                if local_in_range > global_in_range:
+                    global_in_range = local_in_range
+                    global_coords = local_coords
+
+    print("Start is: ", start, " end is: ", end)
+    print("Coord with most nanobots in range is: ", global_coords, " with ", global_in_range,
+          "in range")
     
     # return from main
     return
@@ -87,7 +109,7 @@ def get_avg_positions(bots):
 
     return total_bots//tot_x, total_bots//tot_y, total_bots//tot_z
     
-
+# for Part 1
 def manhattan_distance(reference_nanbot, compare_nanobot):
     """ calculate the manhattan distance of two nanobot objects """
     total_distance = 0
@@ -98,6 +120,20 @@ def manhattan_distance(reference_nanbot, compare_nanobot):
     total_distance = x_distance + y_distance + z_distance
 
     return total_distance
+
+# this is for brute force of Part 2
+def manhattan_range(x, y, z, compare_nanobot):
+    """ calculate the manhattan distance of coordinate and nanobot """
+    total_distance = 0
+    x_distance = abs(x - compare_nanobot.x)
+    y_distance = abs(y - compare_nanobot.y)
+    z_distance = abs(z - compare_nanobot.z)
+    total_distance = x_distance + y_distance + z_distance
+    if total_distance >= compare_nanobot.rad:
+        return False
+    else:
+        return True
+
 
 # execute
 if __name__ == "__main__":
